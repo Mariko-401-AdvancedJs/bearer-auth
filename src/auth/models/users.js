@@ -2,11 +2,15 @@
 
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-const users = new mongoose.Schema({
+const SECRET = process.env.SECRET;
+
+const users = mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-});
+}, { toJSON: { virtuals: true } });
 
 // Adds a virtual field to the schema. We can see it, but it never persists
 // So, on every user object ... this.token is now readable!
@@ -14,12 +18,15 @@ users.virtual('token').get(function () {
   let tokenObject = {
     username: this.username,
   }
-  return jwt.sign(tokenObject)
+  // return jwt.sign(tokenObject, SECRET)
+  return jwt.sign({
+    data: tokenObject
+  }, SECRET, { expiresIn: 60 * 15 })
 });
 
 users.pre('save', async function () {
   if (this.isModified('password')) {
-    this.password = bcrypt.hash(this.password, 10);
+    this.password = await bcrypt.hash(this.password, 10);
   }
 });
 
@@ -33,11 +40,13 @@ users.statics.authenticateBasic = async function (username, password) {
 
 // BEARER AUTH
 users.statics.authenticateWithToken = async function (token) {
+  // console.log('token', token);
   try {
-    const parsedToken = jwt.verify(token, process.env.SECRET);
+    const parsedToken = await jwt.verify(token, SECRET);
+    // console.log('parsed token', parsedToken);
     const user = this.findOne({ username: parsedToken.username })
     if (user) { return user; }
-    throw new Error("User Not Found");
+    throw new Error('User Not Found');
   } catch (e) {
     throw new Error(e.message)
   }
