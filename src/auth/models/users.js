@@ -21,7 +21,7 @@ users.virtual('token').get(function () {
   // return jwt.sign(tokenObject, SECRET)
   return jwt.sign({
     data: tokenObject
-  }, SECRET, { expiresIn: 60 * 15 })
+  }, SECRET, { expiresIn: 900000 })
 });
 
 users.pre('save', async function () {

@@ -9,7 +9,6 @@
 
 - [front-end application](https://mariko-bearer-auth.herokuapp.com/)
 
-
 ### Setup
 
 #### `.env` requirements (where applicable)
