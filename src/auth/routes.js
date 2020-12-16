@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 authRouter.post('/signup', async (req, res, next) => {
   try {
     let user = new User(req.body);
-    const userRecord = await user.save(req.body);
+    const userRecord = await user.save();
     const output = {
       user: userRecord,
       token: userRecord.token

@@ -7,7 +7,7 @@
 ### Links and Resources
 -  Simon, Stacy, Nathan, Ricardo
 
-- [front-end application](https://mariko-basic-auth.herokuapp.com/signup)
+- [front-end application](https://mariko-bearer-auth.herokuapp.com/)
 
 
 ### Setup
